@@ -29,12 +29,13 @@ export default function App() {
       });
 
       if (!response.ok) throw new Error('Failed to crawl website');
-      
+
       const data = await response.json();
       setResults(data.results);
-      
+
       setAnalyzing(true);
       const aiAnalysis = await getSEOAnalysis(data.results);
+      console.log("test", aiAnalysis);
       setAnalysis(aiAnalysis);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
@@ -66,14 +67,14 @@ export default function App() {
       <main className="max-w-5xl mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-bold text-zinc-900 mb-4 tracking-tight"
           >
             Optimize Your Web Presence
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -107,7 +108,7 @@ export default function App() {
             </button>
           </div>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mt-4 p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600"
@@ -122,7 +123,7 @@ export default function App() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="relative w-20 h-20 mb-6">
-              <motion.div 
+              <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 border-4 border-zinc-200 border-t-zinc-900 rounded-full"
@@ -140,7 +141,7 @@ export default function App() {
 
         {/* Results Section */}
         {analysis && results && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="space-y-8"
@@ -211,16 +212,15 @@ export default function App() {
 
                 return (
                   <div key={idx} className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
-                    <button 
+                    <button
                       onClick={() => setExpandedPage(isExpanded ? null : page.url)}
                       className="w-full p-6 flex items-center justify-between hover:bg-zinc-50 transition-colors text-left"
                     >
                       <div className="flex items-center gap-4 min-w-0">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${
-                          pageAnalysis?.score > 80 ? 'bg-emerald-50 text-emerald-600' : 
-                          pageAnalysis?.score > 50 ? 'bg-amber-50 text-amber-600' : 
-                          'bg-red-50 text-red-600'
-                        }`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${pageAnalysis?.score > 80 ? 'bg-emerald-50 text-emerald-600' :
+                            pageAnalysis?.score > 50 ? 'bg-amber-50 text-amber-600' :
+                              'bg-red-50 text-red-600'
+                          }`}>
                           {pageAnalysis?.score}%
                         </div>
                         <div className="min-w-0">
@@ -241,7 +241,7 @@ export default function App() {
 
                     <AnimatePresence>
                       {isExpanded && (
-                        <motion.div 
+                        <motion.div
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
