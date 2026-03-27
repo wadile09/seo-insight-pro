@@ -38,7 +38,6 @@ export async function getSEOAnalysis(data: PageMetadata[]) {
       "generalSuggestions": ["string"]
     }
   `;
-
   try {
     const response = await ai.models.generateContent({
       model,
