@@ -1,14 +1,13 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+import fs from "fs";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import pLimit from "p-limit";
 
-async function startServer() {
+async function createServer() {
   const app = express();
-  const PORT = 3000;
-
   app.use(express.json());
 
   // API Route: SEO Analysis
@@ -192,16 +191,33 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
+    // In production (like Vercel), we serve static files from 'dist'
+    // But Vercel usually handles this via vercel.json rewrites
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+    if (fs.existsSync(distPath)) {
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+    }
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  return app;
+}
+
+// For local development
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  createServer().then(app => {
+    const PORT = Number(process.env.PORT) || 3000;
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
   });
 }
 
-startServer();
+// Export for Vercel
+const appPromise = createServer();
+export default async (req: any, res: any) => {
+  const app = await appPromise;
+  app(req, res);
+};
